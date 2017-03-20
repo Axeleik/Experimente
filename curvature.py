@@ -57,7 +57,7 @@ def plot_tf(curve,ok,scale1,scale2,scale3,a,b):
     #a3=plt.scatter(*zip(*len3), color="green")
     #plt.legend((a1,a2,a3),(scale1, scale2, scale3),scatterpoints=1,loc='lower left',ncol=3,fontsize=12)
 
-    len1 = [(elem1, elem2 / scale1) for elem1, elem2 in len1]
+    len1 = [(elem1, elem2 / (scale1*2)) for elem1, elem2 in len1]
     #len2 = [(elem1, elem2 / scale2) for elem1, elem2 in len2]
     #len3 = [(elem1, elem2 / scale3) for elem1, elem2 in len3]
 
@@ -75,6 +75,8 @@ def plot_tf(curve,ok,scale1,scale2,scale3,a,b):
     #b2=plt.scatter(*zip(*len2), color="blue")
     #b3=plt.scatter(*zip(*len3), color="green")
     #plt.legend((b1, b2, b3), (scale1, scale2, scale3) ,scatterpoints=1,loc='lower left',ncol=3,fontsize=12)
+    plt.show()
+
     return len1
 
 #f = h5py.File("/home/axeleik/Downloads/cremi.paths.crop.split_z.h5", mode='r')
