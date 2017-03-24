@@ -2,6 +2,7 @@ import h5py
 import scipy
 from scipy import interpolate
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -11,14 +12,33 @@ from mpl_toolkits.mplot3d import Axes3D
 def length(array,scale):
     #gibt einen array mit (nummer des pixels i,laenge des vektors von dem pixel i bis zum pixel i+scale) zurueck
 
-    size = array.shape[0]
+    size = array.shape[0]-1
     new = np.zeros((size,2))
 
 
     for i in xrange(0,size):
         new[i,0]=scale+i
-        new[i,1]=np.linalg.norm(array[i])
+        new[i,1]=np.linalg.norm(array[i])/2+np.linalg.norm(array[i+1])/2
     #new=new[:-1]
+
+    plt.figure()
+    a1 = plt.scatter(*zip(*new), color="red")
+    plt.suptitle('Length')
+    return new
+
+def length2(array):
+    #gibt einen array mit (nummer des pixels i,laenge des vektors von dem pixel i bis zum pixel i+scale) zurueck
+    print "jojojo: ",array
+    size = array.shape[0]
+    new = np.zeros((size))
+
+
+    for i in xrange(0,size):
+
+        new[i]=np.linalg.norm(array[i])
+    #new=new[:-1]
+
+
     return new
 
 def grad(curve, scale):
@@ -53,11 +73,9 @@ def winkel(data):
         angle = np.arccos(cos_angle)  # Winkel in Bogenmas
         array[i]=angle
 
+    print "array datatype: ", array.dtype
         #angle= angle * 360 / 2 / np.pi  # Winkel in Gradmas
     return array
-
-
-
 
 
 
@@ -68,6 +86,13 @@ def curvature_berechnen(data):
     array_winkel=winkel(np.diff(data, axis=0))
     len=array_winkel/len1[:,1] #dphi/ds
     len1[:, 1]=len
+    plt.figure()
+    len2=len1
+    len2[:,1]=array_winkel
+    a3 = plt.scatter(*zip(*len2), color="red")
+    plt.suptitle('Winkel')
+    len1[:, 1]=len
+    print "len1 datatype: ",len1.dtype
 
     return len1
 
@@ -109,27 +134,32 @@ def Curvature_zeichnen(data):
     # here we generate the new interpolated dataset,
     # increase the resolution by increasing the spacing, 500 in this example
     new = interpolate.splev(np.linspace(0, 1, 10000), tck)
+
     berechnete_curvature = curvature_berechnen(np.array(new).transpose())
     plt.figure()
-    a1 = plt.scatter(*zip(*berechnete_curvature), color="red")
+    a2 = plt.scatter(*zip(*berechnete_curvature), color="red")
+    plt.suptitle('Curvature')
     plt.show()
+    print "curvature datatype: ", berechnete_curvature.dtype
     grad = input("Gebe den grad der Kruemmung an: ")
     # if type(grad) !='float' or grad<0:
     #    print "Falsche Eingabe, Grad wurde auf 0.1 gesetzt"
     #    grad =0.1
 
     stark = peaks_finden(berechnete_curvature, new, grad)
-
+    a=int(input("Gebe a ein: "))
+    b = int(input("Gebe b ein: "))
     fig = plt.figure(1)
     ax = Axes3D(fig)
     ax.plot(data[0], data[1], data[2], label='original_true', lw=2, c='Dodgerblue')  # gezackt
     ax.plot(new[0], new[1], new[2], label='fit_true', lw=3, c='red')  # plot
+    ax.plot(new[0][a:b], new[1][a:b], new[2][a:b], label='length', lw=4, c='green')  # plot
 
     # print "len(ein): ",len(ein)
     i2 = 0
-    while i2 < len(stark):
-        ax.plot(stark[i2].transpose()[0], stark[i2].transpose()[1], stark[i2].transpose()[2], lw=4, c='yellow')
-        i2 = i2 + 1
+   # while i2 < len(stark):
+    #    ax.plot(stark[i2].transpose()[0], stark[i2].transpose()[1], stark[i2].transpose()[2], lw=4, c='yellow')
+    #    i2 = i2 + 1
 
     ax.legend()
 
@@ -143,12 +173,14 @@ def printname(name):
 
 
 
-f = h5py.File("/home/axeleik/Downloads/cremi.paths.crop.split_z.h5", mode='r')
+
+
+f = h5py.File("/home/axeleik/Documents/data/cremi.splB.paths.h5", mode='r')
 
 f.visit(printname)
 
-#data = np.array(f["z_predict0/truepaths/z/0/beta_0.5/247/0"])[:, :]
-data = np.array(f["z_train1_predict0/truepaths/z/1/beta_0.5/60/0"])[:, :]
+data = np.array(f["z_predict1/truepaths/z/1/beta_0.5/93/0"])
+
 
 Curvature_zeichnen(data)
 

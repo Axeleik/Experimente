@@ -1,59 +1,66 @@
-
-import vigra.filters as vig
 import numpy as np
-
-# a = np.zeros((200, 200, 100))
-#
-# print a.shape
-#
-# b = vigra.filters.gaussianSmoothing(a, 3)
-#
-# print a.dtype
-#
-# a = a.astype(np.uint32)
-#
-# print a.dtype
-import matplotlib.pyplot as plt
-#import matplotlib.image as mpimg
 import h5py
+from scipy import interpolate
+import matplotlib.pyplot as plt
 
-f = h5py.File("/home/axeleik/Downloads/testdata.h5", mode='r')
-print (f.items())
-print(f["/volumes"].items())
-print('\n', f["/volumes/raw"])
+def curvtest(data):
+    dx_dt = np.gradient(data[0])
+    dy_dt = np.gradient(data[1])
+    dz_dt = np.gradient(data[2])
 
-#image = f.create_dataset(data="/volumes/raw",shape=(0,0,0),)
+    velocity = np.array([[dx_dt[i], dy_dt[i], dz_dt[i]] for i in range(dx_dt.size)]) #
 
-image = f["/volumes/raw"][0,:,:]
-plt.imshow(image)
+    ds_dt = np.sqrt(dx_dt * dx_dt + dy_dt * dy_dt+ dz_dt * dz_dt) #
+    print ds_dt.transpose()
+    print np.array([1 / ds_dt] * 2).transpose().shape
+    print velocity
 
-print "\n",image.dtype
-#image2 = image[:,:,0]
-print (image)
-#img=mpimg.imread('/home/axeleik//Documents/image3.png')
-#print img.shape
-#print "\n Bild:","\n",img
-plt.figure()
+    tangent = np.array([1 / ds_dt] * 3).transpose() * velocity
 
-gauss= vig.gaussianSmoothing(image,3)
+    tangent_x = tangent[:, 0]
+    tangent_y = tangent[:, 1]
+    tangent_z = tangent[:, 2]
 
-i=1
-while i<30:
-    gauss = vig.gaussianSmoothing(gauss, (3,2))
-    i=i+1
-print (gauss)
-plt.imshow(gauss)
-plt.show()
-f.close()
+    deriv_tangent_x = np.gradient(tangent_x)
+    deriv_tangent_y = np.gradient(tangent_y)
+    deriv_tangent_z = np.gradient(tangent_z)
 
-"""with h5py.File() as f:
+    dT_dt = np.array([[deriv_tangent_x[i], deriv_tangent_y[i], deriv_tangent_z[i]] for i in range(deriv_tangent_x.size)])
 
-    image = f[...]
+    length_dT_dt = np.sqrt(deriv_tangent_x * deriv_tangent_x + deriv_tangent_y * deriv_tangent_y + deriv_tangent_z * deriv_tangent_z)
+    normal = np.array([1 / length_dT_dt] * 3).transpose() * dT_dt
+    d2s_dt2 = np.gradient(ds_dt)
+    d2x_dt2 = np.gradient(dx_dt)
+    d2y_dt2 = np.gradient(dy_dt)
+    d2z_dt2 = np.gradient(dz_dt)
 
-# TODO: Distance transform auf segmentierung
-# TODO: Filter auf raw data (z.b. Gauss glaettung)
+    curvature = np.sqrt((d2z_dt2 * dy_dt - dz_dt * d2y_dt2)**2 + (d2x_dt2 * dz_dt - dx_dt * d2z_dt2)**2 + (d2y_dt2 * dx_dt - dy_dt * d2x_dt2)**2) / (dx_dt * dx_dt + dy_dt * dy_dt + dz_dt * dz_dt) ** 1.5
+    t_component = np.array([d2s_dt2] * 3).transpose()
+    n_component = np.array([curvature * ds_dt * ds_dt] * 3).transpose()
 
-from matplotlib import pyplot as plt
+    acceleration = t_component * tangent + n_component * normal
+    size = n_component.shape[0]
+    new = np.zeros((size, 2))
 
-plt.imshow(image[]"""
+    for i in xrange(0, size):
+        new[i, 0] = 1 + i
+        new[i,1] = np.linalg.norm(n_component[i])
 
+    plt.figure()
+    a2 = plt.scatter(*zip(*new), color="red")
+    plt.suptitle('Curvature')
+    plt.show()
+
+f = h5py.File("/home/axeleik/Documents/data/cremi.splB.paths.h5", mode='r')
+
+
+data = np.array(f["z_predict1/truepaths/z/1/beta_0.5/85/3"])
+data = np.array([(elem1, elem2, elem3 * 10) for elem1, elem2, elem3 in data])
+data = data.transpose()
+
+tck, u = interpolate.splprep(data, s=10000)
+
+new = interpolate.splev(np.linspace(0, 1, 250), tck)
+
+
+curvtest(new)
