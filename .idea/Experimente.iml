@@ -3,7 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
     <content url="file://$MODULE_DIR$/../nature_methods_multicut_pipeline" />
-    <content url="file://$MODULE_DIR$/../vis3dee/devel" />
+    <content url="file://$MODULE_DIR$/../vis3dee" />
     <orderEntry type="jdk" jdkName="Python 2.7.12 (~/miniconda3/envs/ilastik-devel/bin/python)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

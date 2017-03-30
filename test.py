@@ -64,3 +64,19 @@ new = interpolate.splev(np.linspace(0, 1, 250), tck)
 
 
 curvtest(new)
+
+
+
+
+import pickle
+
+a = [1, 2]
+
+
+with open('filename.pkl', mode='w') as f:
+    pickle.dump(a, f)
+
+
+with open('filename.pkl', mode='r') as f:
+    b = pickle.load(f)
+
