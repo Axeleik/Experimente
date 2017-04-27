@@ -1,4 +1,3 @@
-from __future__ import print_function
 import skeletopyze
 import numpy as np
 import h5py
@@ -6,6 +5,12 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from skimage.morphology import medial_axis, skeletonize, skeletonize_3d
+
+"""
+
+Benutze mit mc_pipeline_new !
+
+"""
 
 
 #
@@ -91,12 +96,33 @@ params = skeletopyze.Parameters()
 a = np.zeros((200,250,200), dtype=np.int32)
 b = np.zeros((200,250,200), dtype=np.int32)
 
-a[54:79,51:185,20:40] = 1
-a[121:146,51:185,20:40] = 1
-a[25:175,176:195,20:40] = 1
 
-b[25:175,25:50,20:40] = 1
-b[80:120,25:175,20:40] = 1
+
+a[54:79,50:185,20:40] = 1
+a[121:146,50:185,20:40] = 1
+a[19:190,176:185,20:47] = 1  #unterschied von 47 auf 48, linker arm faellt weg
+a[25:175,25:50,20:40] = 1
+a[80:120,25:176,20:40] = 1
+
+# b[25:175,25:50,20:40] = 1
+# b[80:120,25:176,20:40] = 1
+
+
+
+Volume=np.array([[54,51,20],[54,51,40],
+                 [79,51,20],[79,51,40],
+                 [121,51,20],[121,51,40],
+                 [156,51,20],[146,51,40],
+                 [25,176,20],[25,176,40],
+                 [175,176,20],[175,176,40],
+                 [25, 195, 20], [25, 195, 40],
+                 [175, 195, 20], [175, 195, 40],
+                 [54, 176, 20], [54, 176, 40],
+                 [79,176,20],[79,176,40],
+                 [121,176,20],[121,176,40],
+                 [146,176,20],[146,176,40],
+                 [100, 176, 20], [100, 176, 40],
+                 [100, 195, 20], [100, 195, 40]])
 
 # #a=1-a
 # c = skeletopyze.get_skeleton_graph(a, params)
@@ -109,6 +135,9 @@ b[80:120,25:175,20:40] = 1
 #
 # plt.imshow(a[:,:,30])
 # plt.show()
+
+#np.all(c, axis=1)
+
 plt.imshow(a[:,:,29]+b[:,:,29])
 plt.show()
 
@@ -122,26 +151,26 @@ plt.show()
 
 skel_a=np.array([[e1,e2,e3] for e1,e2,e3 in zip(np.where(skel_img_a)[0],np.where(skel_img_a)[1],np.where(skel_img_a)[2])])
 
-skel_a_1_1=np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3==29 and e1<100])
-skel_a_1_2=np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3==29 and e1>100])
-skel_a_2=np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3==30])
-skel_a_3=np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3!=30 and e3!=29])
+# skel_a_1_1=np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3==29 and e1<100])
+# skel_a_1_2=np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3==29 and e1>100])
+# skel_a_2=np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3==30])
+# skel_a_3=np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3!=30 and e3!=29])
 
 skel_b= np.array([[e1,e2,e3] for e1,e2,e3 in zip(np.where(skel_img_b)[0],np.where(skel_img_b)[1],np.where(skel_img_b)[2])])
 
-skel_a_list=[]
-skel_b_list=[]
+# skel_a_list=[]
+# skel_b_list=[]
 
-for i in skel_a:
-    skel_a_list.append(np.array([i]))
+# for i in skel_a:
+#     skel_a_list.append(np.array([i]))
 
 # if skel_a.shape[0]!=0:
 #     for i in np.unique(skel_a[:,2]):
 #         skel_a_list.append(np.array([[e1,e2,e3] for e1,e2,e3 in skel_a if e3==i]))
 
-if skel_b.shape[0]!=0:
-    for i in np.unique(skel_b[:,2]):
-        skel_b_list.append(np.array([[e1,e2,e3] for e1,e2,e3 in skel_b if e3==i]))
+# if skel_b.shape[0]!=0:
+#     for i in np.unique(skel_b[:,2]):
+#         skel_b_list.append(np.array([[e1,e2,e3] for e1,e2,e3 in skel_b if e3==i]))
 
 # skel_b_1_1=np.array([[e1,e2,e3] for e1,e2,e3 in skel_b if e3==29])
 # skel_b_2=np.array([[e1,e2,e3] for e1,e2,e3 in skel_b if e3==30])
@@ -154,11 +183,14 @@ if skel_b.shape[0]!=0:
 # data_a_3 = skel_a_3.transpose()
 data_ab_4 = np.array([[0,200],[0,250],[0,200]])
 
-for i,obj in enumerate(skel_a_list):
-    skel_a_list[i]=obj.transpose()
+# for i,obj in enumerate(skel_a_list):
+#     skel_a_list[i]=obj.transpose()
 
-for i,obj in enumerate(skel_b_list):
-    skel_b_list[i]=obj.transpose()
+skel_a=skel_a.transpose()
+skel_b=skel_b.transpose()
+
+# for i,obj in enumerate(skel_b_list):
+#     skel_b_list[i]=obj.transpose()
 
 # data_b_1_1 = skel_b_1_1.transpose()
 # data_b_2 = skel_b_2.transpose()
@@ -169,8 +201,18 @@ for i,obj in enumerate(skel_b_list):
 fig = plt.figure()
 ax = Axes3D(fig)
 
-for i,obj in enumerate(skel_a_list):
-    ax.scatter(obj[0], obj[1], obj[2], label='original_true', lw=0.000001, c='Dodgerblue')
+
+ax.scatter(skel_a[0], skel_a[1], skel_a[2], label='original_true', lw=0.000001, c='Dodgerblue')
+# ax.scatter(skel_b[0], skel_b[1], skel_b[2], label='original_true', lw=0.000001, c='Red')
+
+
+# for i,obj in enumerate(skel_a_list):
+#     ax.scatter(obj[0], obj[1], obj[2], label='original_true', lw=0.000001, c='Dodgerblue')
+
+Volume=Volume.transpose()
+# ax.scatter(Volume[0], Volume[1], Volume[2], label='original_true', lw=3,c="Yellow")
+
+# ax.scatter(obj[0], obj[1], obj[2], label='original_true', lw=5, c='Yellow')
 
 # for i,obj in enumerate(skel_b_list):
 #     ax.plot(obj[0], obj[1], obj[2], label='original_true', lw=5, c='Red')
