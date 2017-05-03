@@ -92,37 +92,44 @@ Benutze mit mc_pipeline_new !
 # for n in edges:
 #     path= np.append(path, [[4, 2, 3]], axis=0)
 # """
-params = skeletopyze.Parameters()
+#params = skeletopyze.Parameters()
 a = np.zeros((200,250,200), dtype=np.int32)
 b = np.zeros((200,250,200), dtype=np.int32)
 
 
 
-a[54:79,50:185,20:40] = 1
-a[121:146,50:185,20:40] = 1
-a[19:190,176:185,20:47] = 1  #unterschied von 47 auf 48, linker arm faellt weg
+a[53:79,50:185,20:40] = 1
+a[121:147,50:185,20:40] = 1
+a[19:190,176:185,20:40] = 1  #unterschied von 20:47 auf 48, linker arm faellt weg
 a[25:175,25:50,20:40] = 1
 a[80:120,25:176,20:40] = 1
+
+a[54:79,80:100,1:100] = 1
+a[53:79,50:185,80:110] = 1
+a[121:147,50:185,80:110] = 1
+a[1:199,176:185,80:110] = 1  #unterschied von 20:47 auf 48, linker arm faellt weg
+a[25:175,25:50,80:110] = 1
+a[80:120,25:176,80:110] = 1
 
 # b[25:175,25:50,20:40] = 1
 # b[80:120,25:176,20:40] = 1
 
 
 
-Volume=np.array([[54,51,20],[54,51,40],
-                 [79,51,20],[79,51,40],
-                 [121,51,20],[121,51,40],
-                 [156,51,20],[146,51,40],
-                 [25,176,20],[25,176,40],
-                 [175,176,20],[175,176,40],
-                 [25, 195, 20], [25, 195, 40],
-                 [175, 195, 20], [175, 195, 40],
-                 [54, 176, 20], [54, 176, 40],
-                 [79,176,20],[79,176,40],
-                 [121,176,20],[121,176,40],
-                 [146,176,20],[146,176,40],
-                 [100, 176, 20], [100, 176, 40],
-                 [100, 195, 20], [100, 195, 40]])
+# Volume=np.array([[54,51,20],[54,51,40],
+#                  [79,51,20],[79,51,40],
+#                  [121,51,20],[121,51,40],
+#                  [156,51,20],[146,51,40],
+#                  [25,176,20],[25,176,40],
+#                  [175,176,20],[175,176,40],
+#                  [25, 195, 20], [25, 195, 40],
+#                  [175, 195, 20], [175, 195, 40],
+#                  [54, 176, 20], [54, 176, 40],
+#                  [79,176,20],[79,176,40],
+#                  [121,176,20],[121,176,40],
+#                  [146,176,20],[146,176,40],
+#                  [100, 176, 20], [100, 176, 40],
+#                  [100, 195, 20], [100, 195, 40]])
 
 # #a=1-a
 # c = skeletopyze.get_skeleton_graph(a, params)
@@ -138,7 +145,7 @@ Volume=np.array([[54,51,20],[54,51,40],
 
 #np.all(c, axis=1)
 
-plt.imshow(a[:,:,29]+b[:,:,29])
+plt.imshow(a[:,:,29])
 plt.show()
 
 skel_img_a = skeletonize_3d(a)
@@ -209,7 +216,7 @@ ax.scatter(skel_a[0], skel_a[1], skel_a[2], label='original_true', lw=0.000001, 
 # for i,obj in enumerate(skel_a_list):
 #     ax.scatter(obj[0], obj[1], obj[2], label='original_true', lw=0.000001, c='Dodgerblue')
 
-Volume=Volume.transpose()
+# Volume=Volume.transpose()
 # ax.scatter(Volume[0], Volume[1], Volume[2], label='original_true', lw=3,c="Yellow")
 
 # ax.scatter(obj[0], obj[1], obj[2], label='original_true', lw=5, c='Yellow')
