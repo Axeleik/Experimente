@@ -135,7 +135,7 @@ def umwandeln(data):
     return new,data
 
 
-def Curvature_zeichnen(data):
+def Curvature_zeichnen(data,data2):
     new,data = umwandeln(data)
 
     berechnete_curvature = curvature_berechnen(np.array(new).transpose())
@@ -152,21 +152,22 @@ def Curvature_zeichnen(data):
     print "data: ", data
     #data2 = [[-100, 700], [300, 900], [600, 1200]]
     stark = peaks_finden(berechnete_curvature, new, grad)
+
     a = int(input("gib a ein: "))
     b = int(input("gib b ein: "))
 
-    """
+
     path = np.array([[1, 1, 1], [20, 10, 10], [20, 20, 10], [20, 30, 20]], dtype=np.float64)
     path = np.swapaxes(path, 0, 1)
-    nsp.start_figure()
-    nsp.add_path(path)
-    nsp.show()
+    #nsp.start_figure()
+    #nsp.add_path(path)
+    #nsp.show()
     """
     """
     fig = plt.figure(1)
     ax = Axes3D(fig)
     ax.plot(data[0], data[1], data[2], label='original_true', lw=2, c='Dodgerblue')  # gezackt
-    #ax.plot(data2[0], data2[1], data2[2], label='original_true', lw=2, c='Dodgerblue')  # gezackt
+    ax.plot(data2[0], data2[1], data2[2], label='original_true', lw=2, c='Dodgerblue')  # gezackt
     ax.plot(new[0], new[1], new[2], label='fit_true', lw=1, c='red')  # plot
     ax.plot(new[0][a:b], new[1][a:b], new[2][a:b], label='Bereich', lw=5, c='green')
     print "Stark: ", stark
@@ -179,7 +180,7 @@ def Curvature_zeichnen(data):
     ax.legend()
 
     plt.show()
-    """
+
     return berechnete_curvature
 
 
@@ -192,15 +193,15 @@ if __name__ == "__main__":
     pass
     f = h5py.File("/home/axeleik/Downloads/cremi.paths.crop.split_z.h5", mode='r')
 
-    f.visit(printname)
 
 
 
-    data = np.array(f["z_predict0/truepaths/z/0/beta_0.5/250/2"])
 
-    maximum_ausgeben(data)
-    data2 = np.array([[0, 2 , 3],[0, 2.2 , 3.1],[0, 2.1 , 3.2],[0.5, 2.5 , 3.5],[1.1, 2.7 , 3.3],[1.3, 1.5 , 2.7]])
-    Curvature_zeichnen(data)
+    data = np.array(f["z_train1_predict0/truepaths/z/1/beta_0.5/98/0"])
+
+    print maximum_ausgeben(data)
+    data2 = [[0, 700], [920, 1620], [280, 980]]
+    print Curvature_zeichnen(data,data2)
 
 
 
