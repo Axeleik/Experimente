@@ -107,6 +107,7 @@ def peaks_finden(curv,new,grad=0.1):
     small = np.array([(elem1, elem2) for (elem1, elem2) in curv if elem2>grad])
     orte = [elem1 for (elem1, elem2) in small]
     new_new= np.array(new).transpose()
+    orte = [int(i) for i in orte]
     small_array = np.array([elem1 for elem1 in np.array(new_new)[orte]])
     where = np.where(np.diff(np.array(orte)) > 1)
     where = where[0]
@@ -167,7 +168,9 @@ def Curvature_zeichnen(data,data2):
     fig = plt.figure(1)
     ax = Axes3D(fig)
     ax.plot(data[0], data[1], data[2], label='original_true', lw=2, c='Dodgerblue')  # gezackt
-    ax.plot(data2[0], data2[1], data2[2], label='original_true', lw=2, c='Dodgerblue')  # gezackt
+    ax.scatter(data2[0][0], data2[1][0], data2[2][0], label='original_true', lw=0, c='Dodgerblue')  # gezackt
+    ax.scatter(data2[0][1], data2[1][1], data2[2][1], label='original_true', lw=0, c='Dodgerblue')  # gezackt
+
     ax.plot(new[0], new[1], new[2], label='fit_true', lw=1, c='red')  # plot
     ax.plot(new[0][a:b], new[1][a:b], new[2][a:b], label='Bereich', lw=5, c='green')
     print "Stark: ", stark
@@ -185,7 +188,6 @@ def Curvature_zeichnen(data,data2):
 
 
 
-
 def printname(name):
     print name
 
@@ -197,10 +199,10 @@ if __name__ == "__main__":
 
 
 
-    data = np.array(f["z_train1_predict0/truepaths/z/1/beta_0.5/98/0"])
+    data = np.array(f["z_predict0/truepaths/z/0/beta_0.5/216/0"])
 
     print maximum_ausgeben(data)
-    data2 = [[0, 700], [920, 1620], [280, 980]]
+    data2 = [[0, 550], [1000, 1550], [600, 1150]]
     print Curvature_zeichnen(data,data2)
 
 
