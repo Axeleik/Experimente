@@ -10,12 +10,11 @@ import numpy as np
 
 
 
-
+# TODO anisotropy for length
 def length(array,scale):
-    #gibt einen array mit (nummer des pixels i,laenge des vektors von dem pixel i bis zum pixel i+scale) zurueck
+#calculating finite difference
 
-
-    size = array.shape[0]-3
+    size = array.shape[0]-2
     new = np.zeros((size,2))
 
 
@@ -107,6 +106,7 @@ def peaks_finden(curv,new,grad=0.1):
     small = np.array([(elem1, elem2) for (elem1, elem2) in curv if elem2>grad])
     orte = [elem1 for (elem1, elem2) in small]
     new_new= np.array(new).transpose()
+    orte = [int(i) for i in orte]
     small_array = np.array([elem1 for elem1 in np.array(new_new)[orte]])
     where = np.where(np.diff(np.array(orte)) > 1)
     where = where[0]
@@ -128,9 +128,9 @@ def umwandeln(data):
     data = np.array([(elem1 * 10, elem2, elem3) for elem1, elem2, elem3 in data])
     data = data.transpose()
 
-    tck, u = interpolate.splprep(data, s=3500,k=3)
+    tck, u = interpolate.splprep(data, s=5000,k=3)
 
-    new = interpolate.splev(np.linspace(0, 1, 100000), tck)
+    new = interpolate.splev(np.linspace(0, 1, len(data[0])), tck)
 
     return new,data
 
@@ -147,14 +147,14 @@ def Curvature_zeichnen(data,data2):
 
 
 
-    grad = input("Gebe den grad der Kruemmung an: ")
+    grad = 100 #input("Gebe den grad der Kruemmung an: ")
 
     print "data: ", data
     #data2 = [[-100, 700], [300, 900], [600, 1200]]
     stark = peaks_finden(berechnete_curvature, new, grad)
 
-    a = int(input("gib a ein: "))
-    b = int(input("gib b ein: "))
+    a =0 #int(input("gib a ein: "))
+    b =0 #int(input("gib b ein: "))
 
 
     path = np.array([[1, 1, 1], [20, 10, 10], [20, 20, 10], [20, 30, 20]], dtype=np.float64)
@@ -166,15 +166,16 @@ def Curvature_zeichnen(data,data2):
     """
     fig = plt.figure(1)
     ax = Axes3D(fig)
+
     ax.plot(data[0], data[1], data[2], label='original_true', lw=2, c='Dodgerblue')  # gezackt
-    ax.plot(data2[0], data2[1], data2[2], label='original_true', lw=2, c='Dodgerblue')  # gezackt
+    ax.scatter(data2[0], data2[1], data2[2], label='original_true', lw=0, c='Dodgerblue')  # gezackt
     ax.plot(new[0], new[1], new[2], label='fit_true', lw=1, c='red')  # plot
-    ax.plot(new[0][a:b], new[1][a:b], new[2][a:b], label='Bereich', lw=5, c='green')
+    #ax.plot(new[0][a:b], new[1][a:b], new[2][a:b], label='Bereich', lw=5, c='green')
     print "Stark: ", stark
     i2 = 0
     if len(stark[0])!=0:
         while i2 < len(stark):
-            ax.plot(stark[i2].transpose()[0], stark[i2].transpose()[1], stark[i2].transpose()[2], lw=4, c='yellow')
+            #ax.plot(stark[i2].transpose()[0], stark[i2].transpose()[1], stark[i2].transpose()[2], lw=4, c='yellow')
             i2 = i2 + 1
 
     ax.legend()
@@ -191,16 +192,16 @@ def printname(name):
 
 if __name__ == "__main__":
     pass
-    f = h5py.File("/home/axeleik/Downloads/cremi.paths.crop.split_z.h5", mode='r')
+    f = h5py.File("/mnt/localdata03/amatskev/cremi.paths.crop.split_z.h5", mode='r')
 
 
 
 
 
-    data = np.array(f["z_train1_predict0/truepaths/z/1/beta_0.5/98/0"])
+    data = np.array(f["z_predict0/truepaths/z/0/beta_0.5/216/0"])
 
     print maximum_ausgeben(data)
-    data2 = [[0, 700], [920, 1620], [280, 980]]
+    data2 = [[0, 550], [1000, 1550], [600, 1150]]
     print Curvature_zeichnen(data,data2)
 
 
